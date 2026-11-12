@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="crm_lead_view_form_re" model="ir.ui.view">
+        <field name="name">crm.lead.form.re</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_re_mark_reviewed" type="object" string="Reviewed &amp; Assign"
+                        class="btn-secondary" invisible="re_admin_reviewed"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Real Estate" name="odoo_real_estate">
+                    <group>
+                        <group>
+                            <field name="re_lead_type"/>
+                            <field name="re_agency_id"/>
+                            <field name="re_agency_state" widget="badge" invisible="not re_agency_id"
+                                   decoration-success="re_agency_state == 'active'"
+                                   decoration-danger="re_agency_state in ('suspended', 'cancelled')"/>
+                            <field name="re_broker_id"
+                                   domain="[('re_partner_type', '=', 'broker'), ('parent_id', '=?', re_agency_id)]"/>
+                            <field name="re_territory_id"/>
+                        </group>
+                        <group>
+                            <field name="re_project_ids" widget="many2many_tags"/>
+                            <field name="re_admin_reviewed"/>
+                            <field name="re_reviewed_by_id" invisible="not re_admin_reviewed"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="crm_lead_view_list_re" model="ir.ui.view">
+        <field name="name">crm.lead.list.re</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_leads"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="before">
+                <field name="re_lead_type" optional="show"/>
+                <field name="re_agency_id" optional="show"/>
+                <field name="re_admin_reviewed" optional="show" widget="boolean_toggle"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="crm_lead_view_search_re" model="ir.ui.view">
+        <field name="name">crm.lead.search.re</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_leads_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="re_agency_id"/>
+                <filter name="re_to_review" string="To Review (Sales Admin)"
+                        domain="[('re_admin_reviewed', '=', False)]"/>
+                <filter name="re_no_agency" string="Agency not identified"
+                        domain="[('re_agency_id', '=', False), ('re_lead_type', 'in', ('agency', 'broker'))]"/>
+                <filter name="re_group_agency" string="Agency" context="{'group_by': 're_agency_id'}"/>
+                <filter name="re_group_territory" string="Territory" context="{'group_by': 're_territory_id'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

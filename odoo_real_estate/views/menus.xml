@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_re_root" name="Real Estate" sequence="25"
+              groups="sales_team.group_sale_salesman,account.group_account_invoice"/>
+
+    <menuitem id="menu_re_sales" name="Sales" parent="menu_re_root" sequence="10"/>
+    <menuitem id="menu_re_projects" name="Projects" parent="menu_re_sales"
+              action="action_re_project" sequence="10"/>
+    <menuitem id="menu_re_units" name="Units" parent="menu_re_sales"
+              action="action_re_unit" sequence="20"/>
+    <menuitem id="menu_re_orders" name="Sales Orders" parent="menu_re_sales"
+              action="sale.action_orders" sequence="30"/>
+
+    <menuitem id="menu_re_collections" name="Collections" parent="menu_re_root" sequence="20"/>
+    <menuitem id="menu_re_installments" name="Installments" parent="menu_re_collections"
+              action="action_re_installment" sequence="10"/>
+
+    <menuitem id="menu_re_network" name="Agencies &amp; Brokers" parent="menu_re_root" sequence="30"/>
+    <menuitem id="menu_re_agencies" name="Agencies" parent="menu_re_network"
+              action="action_re_agencies" sequence="10"/>
+    <menuitem id="menu_re_brokers" name="Brokers" parent="menu_re_network"
+              action="action_re_brokers" sequence="20"/>
+    <menuitem id="menu_re_documents" name="Documents &amp; Renewals" parent="menu_re_network"
+              action="action_re_partner_document" sequence="30"/>
+
+    <menuitem id="menu_re_commissions_root" name="Commissions" parent="menu_re_root" sequence="40"/>
+    <menuitem id="menu_re_commissions" name="Commissions" parent="menu_re_commissions_root"
+              action="action_re_commission" sequence="10"/>
+    <menuitem id="menu_re_commission_agreements" name="Agreements" parent="menu_re_commissions_root"
+              action="action_re_commission_agreement" sequence="20"/>
+
+    <menuitem id="menu_re_contracts_root" name="Contracts" parent="menu_re_root" sequence="50"/>
+    <menuitem id="menu_re_contracts" name="Contracts" parent="menu_re_contracts_root"
+              action="action_re_contract" sequence="10"/>
+    <menuitem id="menu_re_migration" name="Migration (OCR / AI)" parent="menu_re_contracts_root"
+              action="action_re_migration_batch" sequence="20" groups="sales_team.group_sale_manager"/>
+
+    <menuitem id="menu_re_config" name="Configuration" parent="menu_re_root" sequence="100"
+              groups="sales_team.group_sale_manager"/>
+    <menuitem id="menu_re_settings" name="Settings" parent="menu_re_config"
+              action="action_re_settings" sequence="1"/>
+    <menuitem id="menu_re_territories" name="Territories" parent="menu_re_config"
+              action="action_re_territory" sequence="10"/>
+    <menuitem id="menu_re_payment_plans" name="Payment Plans" parent="menu_re_config"
+              action="action_re_payment_plan" sequence="20"/>
+    <menuitem id="menu_re_document_types" name="Document Types" parent="menu_re_config"
+              action="action_re_document_type" sequence="30"/>
+    <menuitem id="menu_re_commission_plans" name="Commission Plans" parent="menu_re_config"
+              action="action_re_commission_plan" sequence="40"/>
+</odoo>

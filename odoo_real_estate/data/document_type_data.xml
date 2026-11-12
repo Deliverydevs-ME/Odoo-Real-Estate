@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="doc_type_trade_license" model="re.document.type">
+        <field name="name">Trade License</field>
+        <field name="code">TL</field>
+        <field name="sequence">1</field>
+        <field name="applies_to">agency</field>
+    </record>
+    <record id="doc_type_orn" model="re.document.type">
+        <field name="name">ORN Certificate (RERA)</field>
+        <field name="code">ORN</field>
+        <field name="sequence">2</field>
+        <field name="applies_to">agency</field>
+    </record>
+    <record id="doc_type_brn" model="re.document.type">
+        <field name="name">BRN Card (RERA)</field>
+        <field name="code">BRN</field>
+        <field name="sequence">3</field>
+        <field name="applies_to">broker</field>
+    </record>
+    <record id="doc_type_moa" model="re.document.type">
+        <field name="name">Memorandum of Association (MOA)</field>
+        <field name="code">MOA</field>
+        <field name="sequence">4</field>
+        <field name="applies_to">agency</field>
+        <field name="requires_expiry" eval="False"/>
+    </record>
+    <record id="doc_type_iban" model="re.document.type">
+        <field name="name">IBAN Letter</field>
+        <field name="code">IBAN</field>
+        <field name="sequence">5</field>
+        <field name="applies_to">agency</field>
+        <field name="requires_expiry" eval="False"/>
+    </record>
+    <record id="doc_type_kyc" model="re.document.type">
+        <field name="name">KYC File</field>
+        <field name="code">KYC</field>
+        <field name="sequence">6</field>
+        <field name="applies_to">both</field>
+        <field name="reminder_days">30,7</field>
+    </record>
+    <record id="doc_type_emirates_id" model="re.document.type">
+        <field name="name">Emirates ID / Passport</field>
+        <field name="code">EID</field>
+        <field name="sequence">7</field>
+        <field name="applies_to">broker</field>
+        <field name="reminder_days">30,7</field>
+    </record>
+    <record id="doc_type_agency_agreement" model="re.document.type">
+        <field name="name">Agency Agreement</field>
+        <field name="code">AGR</field>
+        <field name="sequence">8</field>
+        <field name="applies_to">agency</field>
+        <field name="is_required" eval="False"/>
+    </record>
+</odoo>

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_re" model="ir.ui.view">
+        <field name="name">res.partner.form.re</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/*[1]" position="before">
+                <header invisible="re_partner_type not in ('agency', 'broker')">
+                    <button name="action_re_submit" type="object" string="Submit Registration"
+                            invisible="re_registration_state != 'draft'"/>
+                    <button name="action_re_activate" type="object" string="Activate Registration" class="btn-primary"
+                            invisible="re_registration_state not in ('draft', 'submitted', 'suspended')"
+                            groups="sales_team.group_sale_manager"/>
+                    <button name="action_re_suspend" type="object" string="Suspend"
+                            invisible="re_registration_state != 'active'" groups="sales_team.group_sale_manager"/>
+                    <button name="action_re_cancel" type="object" string="Cancel Registration"
+                            invisible="re_registration_state in ('draft', 'cancelled')"
+                            groups="sales_team.group_sale_manager"
+                            confirm="Cancel this registration?"/>
+                    <button name="action_re_reset" type="object" string="Reset to Draft"
+                            invisible="re_registration_state not in ('suspended', 'cancelled')"
+                            groups="sales_team.group_sale_manager"/>
+                    <field name="re_registration_state" widget="statusbar"
+                           statusbar_visible="draft,submitted,active"/>
+                </header>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_re_view_documents" type="object" class="oe_stat_button" icon="fa-folder-open"
+                        invisible="re_partner_type not in ('agency', 'broker')">
+                    <div class="o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="re_document_count"/>
+                            <span class="text-danger ms-1" invisible="not re_document_alert_count">
+                                (<field name="re_document_alert_count"/> <i class="fa fa-exclamation-triangle" title="Expiring / expired"/>)
+                            </span>
+                        </span>
+                        <span class="o_stat_text">Documents</span>
+                    </div>
+                </button>
+            </xpath>
+            <xpath expr="//div[@name='warning_tax']" position="after">
+                <div class="alert alert-warning" role="alert"
+                     invisible="not is_company or not re_possible_duplicate_ids">
+                    <strong>Possible duplicate agency/company:</strong>
+                    <field name="re_possible_duplicate_ids" widget="many2many_tags" readonly="1" class="d-inline"/>
+                    <button name="action_re_merge_duplicates" type="object" string="Review &amp; Merge"
+                            class="btn-link" invisible="not id"/>
+                </div>
+                <div class="alert alert-danger" role="alert"
+                     invisible="re_registration_state not in ('suspended', 'cancelled') or not re_status_reason">
+                    <field name="re_status_reason" readonly="1"/>
+                </div>
+            </xpath>
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="re_partner_type"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Registration" name="re_registration"
+                      invisible="re_partner_type not in ('agency', 'broker')">
+                    <group>
+                        <group string="Assignment">
+                            <field name="re_territory_id"/>
+                            <field name="re_rm_id" widget="many2one_avatar_user"/>
+                            <field name="re_agency_id" invisible="re_partner_type != 'broker'"/>
+                        </group>
+                        <group string="Registration">
+                            <field name="re_trade_license_no" invisible="re_partner_type != 'agency'"/>
+                            <field name="re_orn_no" invisible="re_partner_type != 'agency'"/>
+                            <field name="re_brn_no" invisible="re_partner_type != 'broker'"/>
+                            <field name="re_registration_date"/>
+                            <field name="re_document_status" widget="badge"
+                                   decoration-success="re_document_status == 'ok'"
+                                   decoration-warning="re_document_status in ('expiring', 'missing')"
+                                   decoration-danger="re_document_status == 'expired'"/>
+                            <field name="re_next_expiry_date"/>
+                            <field name="re_missing_document_ids" widget="many2many_tags"
+                                   invisible="not re_missing_document_ids"/>
+                        </group>
+                    </group>
+                    <field name="re_document_ids" context="{'default_partner_id': id}">
+                        <list editable="bottom"
+                              decoration-danger="state == 'expired'" decoration-warning="state == 'expiring'">
+                            <field name="type_id" options="{'no_create': True}"/>
+                            <field name="document_number"/>
+                            <field name="issue_date" optional="show"/>
+                            <field name="expiry_date" invisible="not requires_expiry"/>
+                            <field name="requires_expiry" column_invisible="True"/>
+                            <field name="days_to_expiry" invisible="not expiry_date" optional="show"/>
+                            <field name="state" widget="badge"
+                                   decoration-success="state in ('valid', 'no_expiry')"
+                                   decoration-warning="state in ('expiring', 'missing_date')"
+                                   decoration-danger="state == 'expired'"/>
+                            <field name="renewal_state" optional="show"/>
+                            <field name="attachment_ids" widget="many2many_binary"/>
+                        </list>
+                    </field>
+                </page>
+                <page string="Brokers" name="re_brokers" invisible="re_partner_type != 'agency'">
+                    <field name="re_broker_ids"
+                           context="{'default_parent_id': id, 'default_re_partner_type': 'broker', 'default_re_territory_id': re_territory_id, 'default_re_rm_id': re_rm_id}">
+                        <list>
+                            <field name="name"/>
+                            <field name="re_brn_no"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="re_document_status" widget="badge"
+                                   decoration-success="re_document_status == 'ok'"
+                                   decoration-warning="re_document_status in ('expiring', 'missing')"
+                                   decoration-danger="re_document_status == 'expired'"/>
+                            <field name="re_registration_state" widget="badge"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_partner_list_re_agency" model="ir.ui.view">
+        <field name="name">res.partner.list.re.agency</field>
+        <field name="model">res.partner</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="re_partner_type" optional="hide"/>
+                <field name="re_agency_id" optional="show" string="Agency"/>
+                <field name="re_trade_license_no" optional="show"/>
+                <field name="re_orn_no" optional="show"/>
+                <field name="re_brn_no" optional="hide"/>
+                <field name="re_territory_id"/>
+                <field name="re_rm_id" widget="many2one_avatar_user"/>
+                <field name="email" optional="show"/>
+                <field name="phone" optional="hide"/>
+                <field name="re_registration_state" widget="badge"
+                       decoration-success="re_registration_state == 'active'"
+                       decoration-warning="re_registration_state == 'suspended'"
+                       decoration-danger="re_registration_state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_partner_search_re" model="ir.ui.view">
+        <field name="name">res.partner.search.re</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="re_trade_license_no"/>
+                <field name="re_orn_no"/>
+                <field name="re_brn_no"/>
+                <field name="re_territory_id"/>
+                <field name="re_rm_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='type_company']" position="after">
+                <separator/>
+                <filter name="re_agencies" string="Agencies" domain="[('re_partner_type', '=', 'agency')]"/>
+                <filter name="re_brokers" string="Brokers" domain="[('re_partner_type', '=', 'broker')]"/>
+                <filter name="re_investors" string="Investors" domain="[('re_partner_type', '=', 'investor')]"/>
+                <separator/>
+                <filter name="re_reg_active" string="Registration Active"
+                        domain="[('re_registration_state', '=', 'active')]"/>
+                <filter name="re_reg_suspended" string="Suspended / Cancelled"
+                        domain="[('re_registration_state', 'in', ('suspended', 'cancelled'))]"/>
+                <filter name="group_territory" string="Territory" context="{'group_by': 're_territory_id'}"/>
+                <filter name="group_rm" string="Relationship Manager" context="{'group_by': 're_rm_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_re_agencies" model="ir.actions.act_window">
+        <field name="name">Agencies</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="view_id" ref="view_partner_list_re_agency"/>
+        <field name="domain">[('re_partner_type', '=', 'agency')]</field>
+        <field name="context">{'default_re_partner_type': 'agency', 'default_is_company': True}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Register your first agency</p>
+            <p>One profile per agency: Trade License, ORN, brokers, documents and their expiry dates.</p>
+        </field>
+    </record>
+
+    <record id="action_re_brokers" model="ir.actions.act_window">
+        <field name="name">Brokers</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="view_id" ref="view_partner_list_re_agency"/>
+        <field name="domain">[('re_partner_type', '=', 'broker')]</field>
+        <field name="context">{'default_re_partner_type': 'broker', 'default_is_company': False}</field>
+    </record>
+</odoo>

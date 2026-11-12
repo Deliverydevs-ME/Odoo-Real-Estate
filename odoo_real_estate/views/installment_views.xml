@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_re_installment_list" model="ir.ui.view">
+        <field name="name">re.installment.list</field>
+        <field name="model">re.installment</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="is_overdue" decoration-success="state == 'paid'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="order_id"/>
+                <field name="partner_id"/>
+                <field name="project_id" optional="show"/>
+                <field name="unit_id" optional="show"/>
+                <field name="name"/>
+                <field name="due_date"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="amount" sum="Total"/>
+                <field name="amount_paid" sum="Paid" optional="show"/>
+                <field name="amount_residual" sum="Due"/>
+                <field name="invoice_id" optional="show"/>
+                <field name="is_overdue" column_invisible="True"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'paid'"
+                       decoration-warning="state in ('invoiced', 'partial')"
+                       decoration-muted="state == 'cancelled'"/>
+                <field name="last_reminder_date" optional="hide"/>
+                <button name="action_create_invoice" type="object" string="Invoice" icon="fa-file-text-o"
+                        invisible="invoice_id and state != 'cancelled'"/>
+                <button name="action_send_reminder" type="object" string="Remind" icon="fa-envelope"
+                        invisible="state not in ('invoiced', 'partial')"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_re_installment_form" model="ir.ui.view">
+        <field name="name">re.installment.form</field>
+        <field name="model">re.installment</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_create_invoice" type="object" string="Create Invoice" class="btn-primary"
+                            invisible="invoice_id and state != 'cancelled'"/>
+                    <button name="action_send_reminder" type="object" string="Send Reminder"
+                            invisible="state not in ('invoiced', 'partial')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="scheduled,invoiced,paid"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="order_id"/>
+                            <field name="partner_id"/>
+                            <field name="project_id"/>
+                            <field name="unit_id"/>
+                        </group>
+                        <group>
+                            <field name="name"/>
+                            <field name="milestone_type"/>
+                            <field name="due_date"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="percentage"/>
+                            <field name="amount" readonly="invoice_id and state != 'cancelled'"/>
+                            <field name="invoice_id"/>
+                            <field name="amount_paid"/>
+                            <field name="amount_residual"/>
+                            <field name="last_reminder_date"/>
+                            <field name="reminder_count"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_re_installment_search" model="ir.ui.view">
+        <field name="name">re.installment.search</field>
+        <field name="model">re.installment</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="order_id"/>
+                <field name="project_id"/>
+                <field name="unit_id"/>
+                <filter name="overdue" string="Overdue" domain="[('is_overdue', '=', True)]"/>
+                <filter name="open" string="Open" domain="[('state', 'in', ('scheduled', 'invoiced', 'partial'))]"/>
+                <filter name="paid" string="Paid" domain="[('state', '=', 'paid')]"/>
+                <separator/>
+                <filter name="due_date" string="Due Date" date="due_date"/>
+                <filter name="group_project" string="Project" context="{'group_by': 'project_id'}"/>
+                <filter name="group_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
+                <filter name="group_month" string="Due Month" context="{'group_by': 'due_date:month'}"/>
+                <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_re_installment" model="ir.actions.act_window">
+        <field name="name">Installments</field>
+        <field name="res_model">re.installment</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+</odoo>

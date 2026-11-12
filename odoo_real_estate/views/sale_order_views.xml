@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form_re" model="ir.ui.view">
+        <field name="name">sale.order.form.re</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_re_view_installments" type="object" class="oe_stat_button"
+                        icon="fa-calendar" invisible="not re_installment_count">
+                    <field name="re_installment_count" widget="statinfo" string="Installments"/>
+                </button>
+            </xpath>
+            <xpath expr="//group[@name='partner_details']" position="inside">
+                <field name="re_project_id"/>
+                <field name="re_unit_ids" widget="many2many_tags" string="Units" invisible="not re_unit_ids"/>
+                <field name="re_agency_id"/>
+                <field name="re_broker_id"
+                       domain="[('re_partner_type', '=', 'broker'), ('parent_id', '=?', re_agency_id)]"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_template_id']" position="after">
+                <field name="re_is_property" column_invisible="True"/>
+                <field name="re_unit_id" string="Unit" optional="show"
+                       required="re_is_property"
+                       readonly="parent.state == 'sale'"
+                       options="{'no_create': True}"
+                       placeholder="Select the unit..."/>
+                <field name="re_building" optional="show"/>
+                <field name="re_floor" optional="show"/>
+                <field name="re_unit_type" optional="show"/>
+                <field name="re_area_sqft" optional="show"/>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']" position="after">
+                <page string="Payment Plan" name="re_payment_plan">
+                    <group>
+                        <group>
+                            <field name="re_payment_plan_id"/>
+                            <field name="re_schedule_start_date"/>
+                        </group>
+                        <group>
+                            <field name="re_schedule_total"/>
+                            <field name="re_schedule_difference"
+                                   decoration-danger="re_schedule_difference != 0"
+                                   invisible="not re_installment_ids"/>
+                            <field name="re_amount_paid"/>
+                            <field name="re_amount_outstanding"/>
+                            <field name="re_overdue_amount" decoration-danger="re_overdue_amount > 0"/>
+                            <field name="re_next_due_date"/>
+                        </group>
+                    </group>
+                    <div class="mb-2">
+                        <button name="action_re_generate_schedule" type="object" string="Generate Schedule"
+                                class="btn-secondary" icon="fa-magic" invisible="not re_payment_plan_id"
+                                confirm="This replaces the current (not invoiced) schedule. Continue?"/>
+                        <button name="action_re_rebalance_schedule" type="object" string="Rebalance"
+                                class="btn-link ms-2" icon="fa-balance-scale"
+                                invisible="not re_installment_ids or re_schedule_difference == 0"/>
+                    </div>
+                    <p class="text-muted">
+                        The schedule can be edited freely for this customer: change amounts, due dates,
+                        add or remove installments. It must total the order amount before confirmation.
+                    </p>
+                    <field name="re_installment_ids" context="{'default_order_id': id}">
+                        <list editable="bottom" decoration-danger="is_overdue" decoration-success="state == 'paid'"
+                              decoration-muted="state == 'cancelled'">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                            <field name="milestone_type" optional="show"/>
+                            <field name="due_date"/>
+                            <field name="percentage" optional="show"/>
+                            <field name="currency_id" column_invisible="True"/>
+                            <field name="amount" sum="Total" readonly="invoice_id and state != 'cancelled'"/>
+                            <field name="invoice_id" readonly="1" optional="show"/>
+                            <field name="amount_paid" sum="Paid" optional="show"/>
+                            <field name="amount_residual" sum="Due"/>
+                            <field name="is_overdue" column_invisible="True"/>
+                            <field name="state" widget="badge"
+                                   decoration-success="state == 'paid'"
+                                   decoration-warning="state in ('invoiced', 'partial')"
+                                   decoration-muted="state == 'cancelled'"/>
+                            <button name="action_create_invoice" type="object" icon="fa-file-text-o" title="Invoice now"
+                                    invisible="parent.state != 'sale' or (invoice_id and state != 'cancelled')"/>
+                            <button name="action_send_reminder" type="object" icon="fa-envelope" title="Send reminder"
+                                    invisible="state not in ('invoiced', 'partial')"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_order_search_re" model="ir.ui.view">
+        <field name="name">sale.order.search.re</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="re_project_id"/>
+                <field name="re_unit_id"/>
+                <field name="re_agency_id"/>
+                <filter name="re_group_project" string="Project" context="{'group_by': 're_project_id'}"/>
+                <filter name="re_group_agency" string="Agency" context="{'group_by': 're_agency_id'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

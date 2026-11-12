@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_re" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.re</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Real Estate" string="Real Estate" name="odoo_real_estate"
+                     groups="sales_team.group_sale_manager">
+                    <block title="Lead Routing">
+                        <setting string="Broker Leads" help="Team receiving broker leads without an identified agency">
+                            <field name="re_broker_team_id"/>
+                        </setting>
+                        <setting string="Investor Leads" help="Team receiving investor leads">
+                            <field name="re_investor_team_id"/>
+                        </setting>
+                    </block>
+                    <block title="Registrations">
+                        <setting string="Expired Required Document"
+                                 help="What happens to an active registration when a required document expires (after its grace period)">
+                            <field name="re_expiry_action" widget="radio"/>
+                        </setting>
+                    </block>
+                    <block title="Installments">
+                        <setting string="Invoice in Advance" help="Create installment invoices this many days before their due date">
+                            <field name="re_invoice_days_before"/> days
+                        </setting>
+                        <setting string="Auto-confirm Invoices" help="Post installment invoices automatically">
+                            <field name="re_auto_post_invoices"/>
+                        </setting>
+                        <setting string="Payment Reminder" help="Email the customer this many days before an installment is due">
+                            <field name="re_reminder_days_before"/> days
+                        </setting>
+                        <setting string="Overdue Reminders" help="Repeat the reminder for overdue installments every">
+                            <field name="re_overdue_reminder_interval"/> days
+                        </setting>
+                    </block>
+                    <block title="Contract Migration (OCR / AI)">
+                        <setting string="AI Provider" help="Reads scanned contracts and licenses during migration">
+                            <field name="re_ai_provider"/>
+                            <div class="mt-2">
+                                <label for="re_ai_model" class="o_light_label me-2"/>
+                                <field name="re_ai_model" placeholder="provider default"/>
+                            </div>
+                        </setting>
+                        <setting string="API Key" help="Key of the selected provider (stored as a system parameter)">
+                            <field name="re_ai_api_key" password="True"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_re_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="context">{'module': 'odoo_real_estate', 'bin_size': False}</field>
+    </record>
+</odoo>

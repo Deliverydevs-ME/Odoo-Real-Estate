@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Example plans. They are templates only: every plan can be edited, and every generated
+     schedule can be changed per customer (amounts, dates, number of payments). -->
+<odoo noupdate="1">
+    <record id="plan_1_99_monthly" model="re.payment.plan">
+        <field name="name">1% Down Payment + 99% Monthly (1% per month)</field>
+        <field name="sequence">1</field>
+        <field name="line_ids" eval="[
+            Command.create({'sequence': 1, 'name': 'Down Payment', 'milestone_type': 'down_payment',
+                            'percentage': 1, 'installment_count': 1}),
+            Command.create({'sequence': 2, 'name': 'Monthly Installment', 'milestone_type': 'installment',
+                            'percentage': 99, 'installment_count': 99, 'interval_months': 1,
+                            'start_after_months': 1}),
+        ]"/>
+    </record>
+    <record id="plan_10_40_50" model="re.payment.plan">
+        <field name="name">10% Booking + 40% during Construction + 50% on Handover</field>
+        <field name="sequence">2</field>
+        <field name="line_ids" eval="[
+            Command.create({'sequence': 1, 'name': 'Booking', 'milestone_type': 'down_payment',
+                            'percentage': 10, 'installment_count': 1}),
+            Command.create({'sequence': 2, 'name': 'Construction Installment', 'milestone_type': 'installment',
+                            'percentage': 40, 'installment_count': 8, 'interval_months': 3,
+                            'start_after_months': 3}),
+            Command.create({'sequence': 3, 'name': 'On Handover', 'milestone_type': 'handover',
+                            'percentage': 50, 'installment_count': 1, 'start_after_months': 3}),
+        ]"/>
+    </record>
+    <record id="plan_20_80_post_handover" model="re.payment.plan">
+        <field name="name">20% Down Payment + 80% Post-Handover over 4 years</field>
+        <field name="sequence">3</field>
+        <field name="line_ids" eval="[
+            Command.create({'sequence': 1, 'name': 'Down Payment', 'milestone_type': 'down_payment',
+                            'percentage': 20, 'installment_count': 1}),
+            Command.create({'sequence': 2, 'name': 'Post-Handover Installment', 'milestone_type': 'post_handover',
+                            'percentage': 80, 'installment_count': 48, 'interval_months': 1,
+                            'start_after_months': 1}),
+        ]"/>
+    </record>
+</odoo>

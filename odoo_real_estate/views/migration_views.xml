@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_re_migration_batch_list" model="ir.ui.view">
+        <field name="name">re.migration.batch.list</field>
+        <field name="model">re.migration.batch</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="default_kind"/>
+                <field name="line_count" string="Documents"/>
+                <field name="count_pending" string="To Extract"/>
+                <field name="count_review" string="To Review"/>
+                <field name="count_validated" string="Validated"/>
+                <field name="count_duplicate" string="Duplicates"/>
+                <field name="count_imported" string="Imported"/>
+                <field name="count_error" string="Errors"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_re_migration_batch_form" model="ir.ui.view">
+        <field name="name">re.migration.batch.form</field>
+        <field name="model">re.migration.batch</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_add_uploads" type="object" string="1. Add Uploaded Files"
+                            invisible="not upload_ids" class="btn-primary"/>
+                    <button name="action_extract" type="object" string="2. Extract (OCR / AI)"
+                            class="btn-primary" invisible="not count_pending and not count_error"/>
+                    <button name="action_validate" type="object" string="3. Re-validate"/>
+                    <button name="action_import" type="object" string="4. Import Validated"
+                            class="btn-primary" invisible="not count_validated"
+                            confirm="Create the contracts / agency documents for all validated files?"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_all" type="object" class="oe_stat_button" icon="fa-files-o">
+                            <field name="line_count" widget="statinfo" string="Documents"/>
+                        </button>
+                        <button name="action_view_review" type="object" class="oe_stat_button" icon="fa-eye">
+                            <field name="count_review" widget="statinfo" string="To Review"/>
+                        </button>
+                        <button name="action_view_duplicates" type="object" class="oe_stat_button" icon="fa-clone">
+                            <field name="count_duplicate" widget="statinfo" string="Duplicates"/>
+                        </button>
+                        <button name="action_view_all" type="object" class="oe_stat_button" icon="fa-check">
+                            <field name="count_imported" widget="statinfo" string="Imported"/>
+                        </button>
+                    </div>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="default_kind"/>
+                            <field name="use_ai"/>
+                            <field name="create_missing_partners"/>
+                        </group>
+                        <group>
+                            <field name="count_pending" string="To Extract"/>
+                            <field name="count_validated" string="Validated"/>
+                            <field name="count_error" string="Errors"/>
+                        </group>
+                    </group>
+                    <p class="text-muted">
+                        Flow: upload files (or load a server folder) → extract with OCR/AI → review the
+                        documents flagged "To Review" → import. Duplicates are detected on contract / license /
+                        ORN / BRN numbers and against existing records. The original file is attached to the
+                        created record.
+                    </p>
+                    <notebook>
+                        <page string="Upload" name="upload">
+                            <field name="upload_ids" widget="many2many_binary"/>
+                            <group groups="base.group_system">
+                                <label for="folder_path"/>
+                                <div class="d-flex gap-2">
+                                    <field name="folder_path" placeholder="e.g. D:\Contracts"/>
+                                    <button name="action_load_folder" type="object" string="Load Folder"
+                                            class="btn-secondary" invisible="not folder_path"/>
+                                </div>
+                            </group>
+                        </page>
+                        <page string="Documents" name="documents">
+                            <field name="line_ids" readonly="1">
+                                <list decoration-danger="state in ('error', 'duplicate')"
+                                      decoration-warning="state == 'to_review'"
+                                      decoration-success="state == 'imported'">
+                                    <field name="filename"/>
+                                    <field name="document_kind"/>
+                                    <field name="contract_number" optional="show"/>
+                                    <field name="license_no" optional="show"/>
+                                    <field name="company_name" optional="show"/>
+                                    <field name="customer_name" optional="show"/>
+                                    <field name="agency_id" optional="show"/>
+                                    <field name="expiry_date" optional="hide"/>
+                                    <field name="extraction_method" optional="hide"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state in ('validated', 'imported')"
+                                           decoration-warning="state == 'to_review'"
+                                           decoration-danger="state in ('error', 'duplicate')"/>
+                                    <field name="messages" optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_re_migration_batch" model="ir.actions.act_window">
+        <field name="name">Migration Batches</field>
+        <field name="res_model">re.migration.batch</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a migration batch</p>
+            <p>Upload existing contracts and licenses (PDF / scans); data is extracted automatically,
+               validated, checked for duplicates and imported with the original document attached.</p>
+        </field>
+    </record>
+
+    <!-- Lines -->
+    <record id="view_re_migration_line_list" model="ir.ui.view">
+        <field name="name">re.migration.line.list</field>
+        <field name="model">re.migration.line</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="state in ('error', 'duplicate')" decoration-warning="state == 'to_review'"
+                  decoration-success="state == 'imported'">
+                <field name="batch_id" optional="hide"/>
+                <field name="filename"/>
+                <field name="document_kind"/>
+                <field name="contract_number" optional="show"/>
+                <field name="customer_name" optional="show"/>
+                <field name="company_name" optional="show"/>
+                <field name="license_no" optional="show"/>
+                <field name="orn_no" optional="hide"/>
+                <field name="brn_no" optional="hide"/>
+                <field name="expiry_date" optional="show"/>
+                <field name="contract_value" optional="hide"/>
+                <field name="agency_id" optional="show"/>
+                <field name="partner_id" optional="hide"/>
+                <field name="confidence" optional="hide" widget="percentage"/>
+                <field name="state" widget="badge"
+                       decoration-success="state in ('validated', 'imported')"
+                       decoration-warning="state == 'to_review'"
+                       decoration-danger="state in ('error', 'duplicate')"/>
+                <field name="messages"/>
+                <button name="action_approve" type="object" string="Approve" icon="fa-check"
+                        invisible="state != 'to_review'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_re_migration_line_form" model="ir.ui.view">
+        <field name="name">re.migration.line.form</field>
+        <field name="model">re.migration.line</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_extract" type="object" string="Extract Again"
+                            invisible="state in ('imported',)"/>
+                    <button name="action_rematch" type="object" string="Match &amp; Validate"
+                            invisible="state in ('imported', 'pending', 'queued')"/>
+                    <button name="action_approve" type="object" string="Approve" class="btn-primary"
+                            invisible="state != 'to_review'"/>
+                    <button name="action_import" type="object" string="Import" class="btn-primary"
+                            invisible="state != 'validated'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="pending,extracted,to_review,validated,imported"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-warning" role="alert" invisible="not messages">
+                        <field name="messages" readonly="1"/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="batch_id" readonly="1"/>
+                            <field name="attachment_id" readonly="1"/>
+                            <field name="document_kind"/>
+                        </group>
+                        <group>
+                            <field name="extraction_method"/>
+                            <field name="confidence" widget="percentage"/>
+                            <field name="duplicate_line_id" invisible="not duplicate_line_id"/>
+                            <field name="duplicate_contract_id" invisible="not duplicate_contract_id"/>
+                            <field name="contract_id" invisible="not contract_id"/>
+                            <field name="partner_document_id" invisible="not partner_document_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Contract" name="contract" invisible="document_kind != 'contract'">
+                            <group>
+                                <group>
+                                    <field name="contract_number"/>
+                                    <field name="contract_date"/>
+                                    <field name="start_date"/>
+                                    <field name="end_date"/>
+                                    <field name="contract_value"/>
+                                    <field name="currency"/>
+                                </group>
+                                <group>
+                                    <field name="customer_name"/>
+                                    <field name="customer_email"/>
+                                    <field name="customer_phone"/>
+                                    <field name="agency_name"/>
+                                    <field name="broker_name"/>
+                                    <field name="project_name"/>
+                                    <field name="unit_name"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="payment_terms"/>
+                                <field name="commission_details"/>
+                            </group>
+                        </page>
+                        <page string="License / Registration" name="license"
+                              invisible="document_kind not in ('trade_license', 'orn_certificate', 'brn_card')">
+                            <group>
+                                <group>
+                                    <field name="company_name"/>
+                                    <field name="business_name"/>
+                                    <field name="license_no"/>
+                                    <field name="main_license_no"/>
+                                    <field name="legal_type"/>
+                                    <field name="license_category"/>
+                                </group>
+                                <group>
+                                    <field name="issue_date"/>
+                                    <field name="expiry_date"/>
+                                    <field name="dcci_no"/>
+                                    <field name="commercial_reg_no"/>
+                                    <field name="orn_no"/>
+                                    <field name="brn_no"/>
+                                    <field name="broker_name"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Odoo Mapping" name="mapping">
+                            <group>
+                                <group>
+                                    <field name="agency_id"/>
+                                    <field name="broker_id"/>
+                                    <field name="partner_id"/>
+                                </group>
+                                <group>
+                                    <field name="project_id"/>
+                                    <field name="unit_id"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Raw Text" name="raw" groups="base.group_no_one">
+                            <field name="raw_text"/>
+                            <field name="raw_json"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_re_migration_line_search" model="ir.ui.view">
+        <field name="name">re.migration.line.search</field>
+        <field name="model">re.migration.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="filename"/>
+                <field name="contract_number"/>
+                <field name="license_no"/>
+                <field name="company_name"/>
+                <field name="customer_name"/>
+                <filter name="to_review" string="To Review" domain="[('state', 'in', ('to_review', 'error'))]"/>
+                <filter name="duplicates" string="Duplicates" domain="[('state', '=', 'duplicate')]"/>
+                <filter name="validated" string="Validated" domain="[('state', '=', 'validated')]"/>
+                <filter name="group_kind" string="Document Type" context="{'group_by': 'document_kind'}"/>
+                <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_server_migration_approve" model="ir.actions.server">
+        <field name="name">Approve Selected</field>
+        <field name="model_id" ref="odoo_real_estate.model_re_migration_line"/>
+        <field name="binding_model_id" ref="odoo_real_estate.model_re_migration_line"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">records.filtered(lambda l: l.state == 'to_review').action_approve()</field>
+    </record>
+    <record id="action_server_migration_import" model="ir.actions.server">
+        <field name="name">Import Selected</field>
+        <field name="model_id" ref="odoo_real_estate.model_re_migration_line"/>
+        <field name="binding_model_id" ref="odoo_real_estate.model_re_migration_line"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">records.action_import()</field>
+    </record>
+</odoo>
