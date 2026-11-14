@@ -25,6 +25,7 @@ Odoo Real Estate - ERP/CRM for off-plan developers
         'account',
         'mail',
     ],
+    'images': ['static/description/banner.gif'],
     'data': [
         'security/ir.model.access.csv',
         'data/document_type_data.xml',
@@ -49,4 +50,5 @@ Odoo Real Estate - ERP/CRM for off-plan developers
     'installable': True,
     'application': True,
     'license': 'OEEL-1',
+    "icon": "static/description/icon.png",
 }
