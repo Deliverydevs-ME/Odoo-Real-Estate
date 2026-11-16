@@ -16,7 +16,9 @@ Odoo Real Estate - ERP/CRM for off-plan developers
 * Agency commission agreements, plans and vendor bills
 * Contract repository and bulk OCR / AI migration of existing contracts and licenses
     """,
-    'author': 'Usama Khan',
+    "author": "Deliverydevs",
+    "website": "https://deliverydevs.com",
+    "license": "LGPL-3",
     'depends': [
         'contacts',
         'crm',
