@@ -51,6 +51,5 @@ Odoo Real Estate - ERP/CRM for off-plan developers
     ],
     'installable': True,
     'application': True,
-    'license': 'OEEL-1',
     "icon": "static/description/icon.png",
 }
