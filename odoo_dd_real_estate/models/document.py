@@ -34,7 +34,9 @@ class RealEstateDocumentType(models.Model):
         help="Days after expiry before the registration is suspended/cancelled.")
     active = fields.Boolean(default=True)
 
-    _code_uniq = models.Constraint('UNIQUE(code)', "The document type code must be unique.")
+    _sql_constraints = [
+        ('code_uniq', 'UNIQUE(code)', "The document type code must be unique."),
+    ]
 
     @api.constrains('reminder_days')
     def _check_reminder_days(self):

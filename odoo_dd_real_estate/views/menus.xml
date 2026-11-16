@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <menuitem id="menu_re_root" name="Real Estate" sequence="25"
+              web_icon="odoo_dd_real_estate,static/description/icon.png"
               groups="sales_team.group_sale_salesman,account.group_account_invoice"/>
 
     <menuitem id="menu_re_sales" name="Sales" parent="menu_re_root" sequence="10"/>

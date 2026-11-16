@@ -34,7 +34,9 @@ class RealEstateProject(models.Model):
     sold_unit_count = fields.Integer(compute='_compute_unit_stats')
     active = fields.Boolean(default=True)
 
-    _code_uniq = models.Constraint('UNIQUE(code, company_id)', "The project code must be unique.")
+    _sql_constraints = [
+        ('code_uniq', 'UNIQUE(code, company_id)', "The project code must be unique."),
+    ]
 
     @api.depends('unit_ids.state')
     def _compute_unit_stats(self):
@@ -107,8 +109,10 @@ class RealEstateUnit(models.Model):
     partner_id = fields.Many2one(related='sale_order_id.partner_id', string="Buyer")
     active = fields.Boolean(default=True)
 
-    _name_project_uniq = models.Constraint(
-        'UNIQUE NULLS NOT DISTINCT (project_id, building, name)', "This unit already exists in the project.")
+    _sql_constraints = [
+        ('name_project_uniq', 'UNIQUE NULLS NOT DISTINCT (project_id, building, name)',
+         "This unit already exists in the project."),
+    ]
 
     @api.depends('price', 'area_sqft')
     def _compute_price_per_sqft(self):

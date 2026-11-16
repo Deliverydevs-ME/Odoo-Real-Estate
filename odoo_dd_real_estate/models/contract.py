@@ -36,8 +36,9 @@ class RealEstateContract(models.Model):
         [('active', "Active"), ('completed', "Completed"), ('expired', "Expired"), ('terminated', "Terminated")],
         compute='_compute_state', store=True, readonly=False, tracking=True)
 
-    _name_company_uniq = models.Constraint(
-        'UNIQUE(name, company_id)', "A contract with this number already exists.")
+    _sql_constraints = [
+        ('name_company_uniq', 'UNIQUE(name, company_id)', "A contract with this number already exists."),
+    ]
 
     @api.depends('end_date')
     def _compute_state(self):

@@ -18,7 +18,9 @@ class RealEstateTerritory(models.Model):
         domain=[('re_partner_type', '=', 'agency')])
     agency_count = fields.Integer(compute='_compute_agency_count')
 
-    _code_uniq = models.Constraint('UNIQUE(code)', "The territory code must be unique.")
+    _sql_constraints = [
+        ('code_uniq', 'UNIQUE(code)', "The territory code must be unique."),
+    ]
 
     @api.depends('agency_ids')
     def _compute_agency_count(self):

@@ -95,9 +95,11 @@ class RealEstatePaymentPlanLine(models.Model):
     per_payment_percentage = fields.Float(compute='_compute_per_payment', string="% per Payment",
                                           digits=(16, 4))
 
-    _positive = models.Constraint(
-        'CHECK(percentage > 0 AND installment_count > 0 AND interval_months >= 0 AND start_after_months >= 0)',
-        "Percentages and number of payments must be positive.")
+    _sql_constraints = [
+        ('positive',
+         'CHECK(percentage > 0 AND installment_count > 0 AND interval_months >= 0 AND start_after_months >= 0)',
+         "Percentages and number of payments must be positive."),
+    ]
 
     @api.depends('percentage', 'installment_count')
     def _compute_per_payment(self):

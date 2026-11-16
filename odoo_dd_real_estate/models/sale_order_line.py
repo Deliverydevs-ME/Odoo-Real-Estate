@@ -33,7 +33,7 @@ class SaleOrderLine(models.Model):
         if self.re_unit_id and self.re_unit_id.project_id.product_id != self.product_id:
             self.re_unit_id = False
 
-    @api.depends('product_id', 'product_uom_id', 'product_uom_qty', 're_unit_id')
+    @api.depends('product_id', 'product_uom', 'product_uom_qty', 're_unit_id')
     def _compute_price_unit(self):
         return super()._compute_price_unit()
 
