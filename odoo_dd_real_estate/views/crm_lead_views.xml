@@ -10,7 +10,7 @@
                         class="btn-secondary" invisible="re_admin_reviewed"/>
             </xpath>
             <xpath expr="//notebook" position="inside">
-                <page string="Real Estate" name="odoo_real_estate">
+                <page string="Real Estate" name="odoo_dd_real_estate">
                     <group>
                         <group>
                             <field name="re_lead_type"/>

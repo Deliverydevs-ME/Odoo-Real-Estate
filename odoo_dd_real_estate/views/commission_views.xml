@@ -227,7 +227,7 @@
     <record id="view_partner_form_re_commission" model="ir.ui.view">
         <field name="name">res.partner.form.re.commission</field>
         <field name="model">res.partner</field>
-        <field name="inherit_id" ref="odoo_real_estate.view_partner_form_re"/>
+        <field name="inherit_id" ref="odoo_dd_real_estate.view_partner_form_re"/>
         <field name="arch" type="xml">
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button name="action_re_view_commissions" type="object" class="oe_stat_button" icon="fa-percent"
@@ -257,7 +257,7 @@
     <record id="view_order_form_re_commission" model="ir.ui.view">
         <field name="name">sale.order.form.re.commission</field>
         <field name="model">sale.order</field>
-        <field name="inherit_id" ref="odoo_real_estate.view_order_form_re"/>
+        <field name="inherit_id" ref="odoo_dd_real_estate.view_order_form_re"/>
         <field name="arch" type="xml">
             <xpath expr="//button[@name='action_re_view_installments']" position="after">
                 <button name="action_re_view_commissions" type="object" class="oe_stat_button" icon="fa-percent"

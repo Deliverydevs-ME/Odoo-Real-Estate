@@ -305,7 +305,7 @@ class RealEstateCommission(models.Model):
         if not to_bill:
             raise UserError(_("There is nothing to bill: commissions must be earned, not blocked, "
                               "and not already billed."))
-        product = self.env.ref('odoo_real_estate.product_broker_commission')
+        product = self.env.ref('odoo_dd_real_estate.product_broker_commission')
         bills = self.env['account.move']
         for (agency, company), commissions in to_bill.grouped(lambda c: (c.agency_id, c.company_id)).items():
             bill = self.env['account.move'].with_company(company).create({

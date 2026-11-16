@@ -160,7 +160,7 @@ class RealEstateInstallment(models.Model):
     # ------------------------------------------------------------------
 
     def action_send_reminder(self):
-        template = self.env.ref('odoo_real_estate.mail_template_installment_reminder')
+        template = self.env.ref('odoo_dd_real_estate.mail_template_installment_reminder')
         for inst in self:
             if not inst.partner_id.email:
                 inst.order_id.message_post(body=_(

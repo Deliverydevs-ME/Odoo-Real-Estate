@@ -111,7 +111,7 @@ class ResPartner(models.Model):
             'name': _("Documents - %s", self.name),
             'res_model': 're.partner.document',
             'view_mode': 'list,form',
-            'views': [(self.env.ref('odoo_real_estate.view_re_partner_document_list_partner').id, 'list'),
+            'views': [(self.env.ref('odoo_dd_real_estate.view_re_partner_document_list_partner').id, 'list'),
                       (False, 'form')],
             'domain': self._re_document_domain(),
             'context': {

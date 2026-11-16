@@ -1,5 +1,5 @@
 {
-    'name': 'Odoo Real Estate',
+    'name': 'Odoo DD Real Estate',
     'version': '19.0.1.0.0',
     'category': 'Sales/CRM',
     'summary': 'Agency/broker registry, lead routing, off-plan projects and flexible payment plans',

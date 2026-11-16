@@ -14,9 +14,9 @@ _logger = logging.getLogger(__name__)
 
 SUPPORTED_EXTENSIONS = ('.pdf', '.png', '.jpg', '.jpeg', '.webp')
 KIND_TO_DOC_TYPE = {
-    'trade_license': 'odoo_real_estate.doc_type_trade_license',
-    'orn_certificate': 'odoo_real_estate.doc_type_orn',
-    'brn_card': 'odoo_real_estate.doc_type_brn',
+    'trade_license': 'odoo_dd_real_estate.doc_type_trade_license',
+    'orn_certificate': 'odoo_dd_real_estate.doc_type_orn',
+    'brn_card': 'odoo_dd_real_estate.doc_type_brn',
 }
 REQUIRED_FIELDS = {
     'contract': ['contract_number', 'contract_date', 'contract_value'],
@@ -109,7 +109,7 @@ class RealEstateMigrationBatch(models.Model):
             lines._extract()
         else:
             lines.write({'state': 'queued'})
-            self.env.ref('odoo_real_estate.ir_cron_migration_queue')._trigger()
+            self.env.ref('odoo_dd_real_estate.ir_cron_migration_queue')._trigger()
             self.message_post(body=_("%s documents queued for extraction. They are processed in the background.",
                                      len(lines)))
 

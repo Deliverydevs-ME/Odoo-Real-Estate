@@ -205,9 +205,9 @@ class ExtractionError(Exception):
 
 def get_ai_config(env):
     params = env['ir.config_parameter'].sudo()
-    provider = params.get_param('odoo_real_estate.ai_provider') or 'anthropic'
-    model = params.get_param('odoo_real_estate.ai_model') or DEFAULT_MODELS[provider]
-    api_key = params.get_param('odoo_real_estate.ai_api_key')
+    provider = params.get_param('odoo_dd_real_estate.ai_provider') or 'anthropic'
+    model = params.get_param('odoo_dd_real_estate.ai_model') or DEFAULT_MODELS[provider]
+    api_key = params.get_param('odoo_dd_real_estate.ai_api_key')
     return provider, model, api_key
 
 

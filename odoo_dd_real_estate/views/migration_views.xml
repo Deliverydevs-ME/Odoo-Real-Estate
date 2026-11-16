@@ -278,16 +278,16 @@
 
     <record id="action_server_migration_approve" model="ir.actions.server">
         <field name="name">Approve Selected</field>
-        <field name="model_id" ref="odoo_real_estate.model_re_migration_line"/>
-        <field name="binding_model_id" ref="odoo_real_estate.model_re_migration_line"/>
+        <field name="model_id" ref="odoo_dd_real_estate.model_re_migration_line"/>
+        <field name="binding_model_id" ref="odoo_dd_real_estate.model_re_migration_line"/>
         <field name="binding_view_types">list</field>
         <field name="state">code</field>
         <field name="code">records.filtered(lambda l: l.state == 'to_review').action_approve()</field>
     </record>
     <record id="action_server_migration_import" model="ir.actions.server">
         <field name="name">Import Selected</field>
-        <field name="model_id" ref="odoo_real_estate.model_re_migration_line"/>
-        <field name="binding_model_id" ref="odoo_real_estate.model_re_migration_line"/>
+        <field name="model_id" ref="odoo_dd_real_estate.model_re_migration_line"/>
+        <field name="binding_model_id" ref="odoo_dd_real_estate.model_re_migration_line"/>
         <field name="binding_view_types">list</field>
         <field name="state">code</field>
         <field name="code">records.action_import()</field>

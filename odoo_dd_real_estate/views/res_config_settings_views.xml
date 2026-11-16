@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="base.res_config_settings_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//form" position="inside">
-                <app data-string="Real Estate" string="Real Estate" name="odoo_real_estate"
+                <app data-string="Real Estate" string="Real Estate" name="odoo_dd_real_estate"
                      groups="sales_team.group_sale_manager">
                     <block title="Lead Routing">
                         <setting string="Broker Leads" help="Team receiving broker leads without an identified agency">
@@ -57,6 +57,6 @@
         <field name="name">Settings</field>
         <field name="res_model">res.config.settings</field>
         <field name="view_mode">form</field>
-        <field name="context">{'module': 'odoo_real_estate', 'bin_size': False}</field>
+        <field name="context">{'module': 'odoo_dd_real_estate', 'bin_size': False}</field>
     </record>
 </odoo>

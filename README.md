@@ -1,6 +1,6 @@
 # Odoo Real Estate – Odoo 19 ERP/CRM
 
-Custom Odoo 19 Enterprise module `odoo_real_estate` for off-plan real estate developers (UAE).
+Custom Odoo 19 Enterprise module `odoo_dd_real_estate` for off-plan real estate developers (UAE).
 
 ## Features
 
@@ -19,7 +19,7 @@ Custom Odoo 19 Enterprise module `odoo_real_estate` for off-plan real estate dev
 
 ## Installation
 
-1. Copy `odoo_real_estate/` into a custom addons folder, e.g. `C:\odoo_custom_addons\`.
+1. Copy `odoo_dd_real_estate/` into a custom addons folder, e.g. `C:\odoo_custom_addons\`.
 2. Add that folder to `addons_path` in `odoo.conf` (see `odoo.conf.example`).
 3. Restart the Odoo service, then go to **Apps → Update Apps List** and install **Odoo Real Estate**.
 
